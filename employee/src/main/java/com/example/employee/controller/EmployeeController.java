@@ -1,12 +1,18 @@
 package com.example.employee.controller;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import com.example.employee.entity.Employee;
 import com.example.employee.service.EmployeeService;
 
@@ -25,9 +31,12 @@ public class EmployeeController {
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> listEmployees() {
         List<Employee> allEmployees = employeeService.getAllEmployees();
-        return allEmployees.isEmpty()
-            ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-            : new ResponseEntity<>(allEmployees, HttpStatus.OK);
+
+        if (allEmployees.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(allEmployees, HttpStatus.OK);
+        }
     }
 
     @PostMapping("/employees")
@@ -40,13 +49,13 @@ public class EmployeeController {
         }
     }
 
-    public ResponseEntity<String> deleteEmployee(@PathVariable Integer employeeId) {
+    @DeleteMapping("/employees/{employeeId}")
+    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable Integer employeeId) {
         try {
-            String response = employeeService.deleteEmployeeById(employeeId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            employeeService.deleteEmployeeById(employeeId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("Employee not found for the given ID: " + employeeId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 }
