@@ -53,6 +53,7 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<Orders>> getAllOrders() {
         List<Orders> orders = orderService.getAllOrders();
+       // When you want to include a response body
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
@@ -60,8 +61,10 @@ public class OrderController {
     public ResponseEntity<Orders> getOrder(@PathVariable Long id) {
         Orders order = orderService.getOrderById(id);
         if (order == null) {
+        	  // When you want to include only the status, build gives an empty response entity
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+     // When you want to include only the status
         return ResponseEntity.ok(order);
     }
 
